@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace Rest.Controllers
+namespace Representational_State_Transfer.Controllers
 {
     [ApiController]
     [Route("[controller]")]

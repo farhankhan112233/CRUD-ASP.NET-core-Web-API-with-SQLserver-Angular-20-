@@ -1,4 +1,4 @@
-namespace Rest
+namespace Representational_State_Transfer
 {
     public class WeatherForecast
     {
