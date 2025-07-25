@@ -15,22 +15,18 @@ namespace Representational_State_Transfer.Controllers
         {
             this.dbContext = dbContext;
         }
-        [HttpGet]
-        public IActionResult GetAllPersons()
-        {
-            var persons = dbContext.Persons.ToList();
-            return Ok(persons);
-        }
+        
         [HttpPost]
         public async Task<IActionResult> AddPerson([FromBody] Person person)
         {
-            bool mailExists = dbContext.Persons.Any(p => p.mail == person.mail);
-            bool phoneExists = dbContext.Persons.Any(p => p.phone == person.phone);
-            if (person == null || mailExists || phoneExists)
+            bool existingValues = dbContext.Persons.Any(p => p.mail == person.mail &&
+            p.phone == person.phone);
+            
+            if (person == null || existingValues)
             {
-                BadRequest();
+                return BadRequest();
             }
-          
+
             var newPerson = new Person
             {
                 firstName = person.firstName,
@@ -59,6 +55,46 @@ namespace Representational_State_Transfer.Controllers
             var person = await dbContext.Persons.FindAsync(id);
             return person == null ? NotFound() : Ok(person);
         }
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdatePerson(int id, [FromBody] Person person)
+        {
+
+            if (id != person.Id)
+            {
+                return BadRequest("Person ID mismatch.");
+            }
+            var existingPerson = await dbContext.Persons.FindAsync(id);
+            if (existingPerson == null)
+            {
+                return NotFound();
+            }
+            existingPerson.firstName = person.firstName;
+            existingPerson.lastName = person.lastName;
+            existingPerson.mail = person.mail;
+            existingPerson.Address = person.Address;
+            existingPerson.gender = person.gender;
+            existingPerson.phone = person.phone;
+            existingPerson.description = person.description;
+            dbContext.Persons.Update(existingPerson);
+            await dbContext.SaveChangesAsync();
+            return NoContent();
+
+
+
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeletePerson(int id)
+        {
+            var person = await dbContext.Persons.FindAsync(id);
+            if (person == null)
+            {
+                return NotFound();
+            }
+            dbContext.Persons.Remove(person);
+            await dbContext.SaveChangesAsync();
+            return NoContent();
+        }
     }
 }
+    
 
