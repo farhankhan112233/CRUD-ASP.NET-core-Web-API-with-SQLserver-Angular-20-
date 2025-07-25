@@ -24,6 +24,12 @@ namespace Representational_State_Transfer.Controllers
         [HttpPost]
         public async Task<IActionResult> AddPerson([FromBody] Person person)
         {
+            bool mailExists = dbContext.Persons.Any(p => p.mail == person.mail);
+            bool phoneExists = dbContext.Persons.Any(p => p.phone == person.phone);
+            if (person == null || mailExists || phoneExists)
+            {
+                BadRequest();
+            }
           
             var newPerson = new Person
             {
