@@ -1,19 +1,24 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Representational_State_Transfer.Data;
+using Representational_State_Transfer.Interfaces;
 using Representational_State_Transfer.Models.Entities;
+using Representational_State_Transfer.Services;
 
 namespace Representational_State_Transfer.Controllers
 {
+    
     [Route("api/[controller]")]
     [ApiController]
     public class PersonsController : ControllerBase
     {
         private readonly AppDbContext dbContext;
-
+        
         public PersonsController(AppDbContext dbContext)
         {
-            this.dbContext = dbContext;
+           this.dbContext = dbContext;
+          
         }
         
         [HttpPost]
@@ -48,21 +53,22 @@ namespace Representational_State_Transfer.Controllers
 
             return CreatedAtAction(nameof(GetPersonById), new { id = newPerson.Id }, newPerson);
         }
-
+        
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPersonById(int id)
         {
             var person = await dbContext.Persons.FindAsync(id);
             return person == null ? NotFound() : Ok(person);
         }
+        
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdatePerson(int id, [FromBody] Person person)
         {
-
-            if (id != person.Id)
-            {
-                return BadRequest("Person ID mismatch.");
-            }
+            
+            //if (id != person.Id)
+            //{
+            //    return BadRequest("Person ID mismatch.");
+            //}
             var existingPerson = await dbContext.Persons.FindAsync(id);
             if (existingPerson == null)
             {
@@ -82,6 +88,7 @@ namespace Representational_State_Transfer.Controllers
 
 
         }
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePerson(int id)
         {
@@ -94,6 +101,8 @@ namespace Representational_State_Transfer.Controllers
             await dbContext.SaveChangesAsync();
             return NoContent();
         }
+        
+       
     }
 }
     
