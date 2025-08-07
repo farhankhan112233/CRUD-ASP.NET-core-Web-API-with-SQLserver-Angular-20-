@@ -17,7 +17,7 @@ namespace Representational_State_Transfer.Controllers
         [HttpPost]
         public IActionResult loginJWT([FromBody] Login log)
         {
-            string hash = "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9";
+            string hash = "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9"; //Just using a dummy data instead of making signup page and storing data in db coz i did it just to practice jwt asssigning
 
             if (log.username == "admin" && log.password == hash)
             {
