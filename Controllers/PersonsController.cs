@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Representational_State_Transfer.Data;
-using Representational_State_Transfer.Interfaces;
 using Representational_State_Transfer.Models.Entities;
-using Representational_State_Transfer.Services;
 
 namespace Representational_State_Transfer.Controllers
 {
@@ -26,7 +23,7 @@ namespace Representational_State_Transfer.Controllers
         {
             bool existingValues = dbContext.Persons.Any(p => p.mail == person.mail &&
             p.phone == person.phone);
-            
+
             if (person == null || existingValues)
             {
                 return BadRequest();
@@ -64,11 +61,7 @@ namespace Representational_State_Transfer.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdatePerson(int id, [FromBody] Person person)
         {
-            
-            //if (id != person.Id)
-            //{
-            //    return BadRequest("Person ID mismatch.");
-            //}
+           
             var existingPerson = await dbContext.Persons.FindAsync(id);
             if (existingPerson == null)
             {
@@ -83,7 +76,7 @@ namespace Representational_State_Transfer.Controllers
             existingPerson.description = person.description;
             dbContext.Persons.Update(existingPerson);
             await dbContext.SaveChangesAsync();
-            return NoContent();
+            return Ok();
 
 
 
